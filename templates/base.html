@@ -1,0 +1,124 @@
+{% load static %}<!DOCTYPE html>
+{# ======================================================================== #}
+{# base.html: plantilla PADRE. Todas las páginas hacen {% extends "base.html" %} #}
+{# y completan los bloques: title, content y (opcional) extra_js.            #}
+{# ======================================================================== #}
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Inicio{% endblock %} · InvenShop</title>
+  {# Bootstrap 5 + íconos desde CDN #}
+  {# Bootstrap 5.3.3 y Bootstrap Icons 1.11.3 servidos desde static/vendor: funcionan sin internet #}
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/estilos.css' %}" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-body-tertiary">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{% url 'core:home' %}"><i class="bi bi-box-seam-fill text-warning"></i> InvenShop</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-label="Menú">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="{% url 'catalogo:lista' %}">Catálogo</a></li>
+        {# El menú de gestión solo aparece para el personal (Admin / Empleado) #}
+        {% if user.is_authenticated and user.es_personal %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Gestión</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'core:panel' %}"><i class="bi bi-speedometer2"></i> Panel</a></li>
+              <li><a class="dropdown-item" href="{% url 'catalogo:gestion_productos' %}"><i class="bi bi-box"></i> Productos</a></li>
+              <li><a class="dropdown-item" href="{% url 'catalogo:gestion_categorias' %}"><i class="bi bi-tags"></i> Categorías</a></li>
+              <li><a class="dropdown-item" href="{% url 'pedidos:gestion' %}"><i class="bi bi-receipt"></i> Pedidos</a></li>
+              {% if perms.pedidos.ver_reportes %}
+                <li><a class="dropdown-item" href="{% url 'pedidos:reportes' %}"><i class="bi bi-graph-up"></i> Reportes</a></li>
+              {% endif %}
+              {% if perms.usuarios.change_usuario %}
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{% url 'usuarios:lista' %}"><i class="bi bi-people"></i> Usuarios y roles</a></li>
+                <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-gear"></i> Admin de Django</a></li>
+              {% elif user.es_empleado %}
+                <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-gear"></i> Admin de Django</a></li>
+              {% endif %}
+            </ul>
+          </li>
+        {% endif %}
+      </ul>
+
+      <ul class="navbar-nav align-items-lg-center gap-lg-2">
+        <li class="nav-item">
+          <a class="nav-link position-relative" href="{% url 'pedidos:carrito' %}">
+            <i class="bi bi-cart3 fs-5"></i> Carrito
+            {% if carrito_cantidad %}<span class="badge rounded-pill bg-warning text-dark">{{ carrito_cantidad }}</span>{% endif %}
+          </a>
+        </li>
+        {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle"></i> {{ user.nombre }}
+              <span class="badge text-bg-secondary">{{ user.get_rol_display }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'usuarios:perfil' %}">Mi perfil</a></li>
+              <li><a class="dropdown-item" href="{% url 'pedidos:mis_pedidos' %}">Mis pedidos</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                {# Logout por POST con token CSRF (Django 5+ no acepta GET) #}
+                <form method="post" action="{% url 'usuarios:logout' %}">{% csrf_token %}
+                  <button class="dropdown-item text-danger" type="submit"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
+                </form>
+              </li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'usuarios:login' %}">Ingresar</a></li>
+          <li class="nav-item"><a class="btn btn-warning btn-sm" href="{% url 'usuarios:registro' %}">Crear cuenta</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-4 flex-grow-1">
+  {# Mensajes de retroalimentación (django.contrib.messages) con alertas de Bootstrap #}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+  {% endfor %}
+
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="bg-dark text-white-50 py-3 mt-auto">
+  <div class="container small d-flex justify-content-between flex-wrap gap-2">
+    <span>InvenShop · Trabajo Final de Aplicación · Programación IV 2026</span>
+    <span>Django + Bootstrap 5</span>
+  </div>
+</footer>
+
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script>
+  // Ojito para mostrar/ocultar contraseñas (login, registro, cambiar contraseña)
+  document.querySelectorAll(".js-ver-password").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var input = document.getElementById(btn.dataset.target);
+      var icono = btn.querySelector("i");
+      var mostrar = input.type === "password";
+      input.type = mostrar ? "text" : "password";
+      icono.classList.toggle("bi-eye", !mostrar);
+      icono.classList.toggle("bi-eye-slash", mostrar);
+      var texto = mostrar ? "Ocultar contraseña" : "Mostrar contraseña";
+      btn.setAttribute("aria-label", texto);
+      btn.title = texto;
+    });
+  });
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

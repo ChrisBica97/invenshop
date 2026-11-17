@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Crear cuenta{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card border-0 shadow-sm"><div class="card-body p-4">
+      <h1 class="h4 mb-1">Crear cuenta</h1>
+      <p class="text-muted small">Las cuentas nuevas se crean con rol <strong>Cliente</strong>.</p>
+      {# novalidate: se desactiva la validación del navegador para mostrar la del servidor (Django) #}
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-sm-6">{% include "includes/campo.html" with field=form.nombre %}</div>
+          <div class="col-sm-6">{% include "includes/campo.html" with field=form.apellido %}</div>
+        </div>
+        {% include "includes/campo.html" with field=form.email %}
+        {% include "includes/campo.html" with field=form.telefono %}
+        {% include "includes/campo.html" with field=form.password1 %}
+        {% include "includes/campo.html" with field=form.password2 %}
+        {{ form.non_field_errors }}
+        <button class="btn btn-dark w-100">Registrarme</button>
+      </form>
+      <p class="text-center mt-3 mb-0 small">¿Ya tenés cuenta? <a href="{% url 'usuarios:login' %}">Ingresá</a></p>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

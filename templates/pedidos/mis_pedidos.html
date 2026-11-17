@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Mis pedidos{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4"><i class="bi bi-receipt"></i> Mis pedidos</h1>
+{% if pedidos %}
+<div class="table-responsive">
+<table class="table table-hover bg-white shadow-sm align-middle">
+  <thead class="table-dark"><tr><th>N°</th><th>Fecha</th><th>Estado</th><th class="text-center">Unidades</th><th class="text-end">Total</th><th></th></tr></thead>
+  <tbody>
+  {% for p in pedidos %}
+    <tr>
+      <td class="fw-semibold">{{ p.numero }}</td>
+      <td>{{ p.fecha_creacion|date:"d/m/Y H:i" }}</td>
+      <td><span class="badge estado-{{ p.estado }}">{{ p.get_estado_display }}</span></td>
+      <td class="text-center">{{ p.unidades }}</td>
+      <td class="text-end">$ {{ p.total|floatformat:"2g" }}</td>
+      <td class="text-end"><a href="{{ p.get_absolute_url }}" class="btn btn-sm btn-outline-dark">Ver detalle</a></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% include "includes/paginacion.html" %}
+{% else %}
+  <div class="alert alert-light border">Todavía no hiciste pedidos. <a href="{% url 'catalogo:lista' %}">Ir al catálogo</a></div>
+{% endif %}
+{% endblock %}

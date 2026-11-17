@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Gestión de pedidos{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3"><i class="bi bi-receipt"></i> Gestión de pedidos</h1>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-5"><input type="search" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="N° de pedido o email del cliente"></div>
+  <div class="col-md-4">
+    <select name="estado" class="form-select">
+      <option value="">Todos los estados</option>
+      {% for valor, etiqueta in estados %}<option value="{{ valor }}" {% if estado_actual == valor %}selected{% endif %}>{{ etiqueta }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3"><button class="btn btn-outline-dark w-100">Filtrar</button></div>
+</form>
+
+<div class="table-responsive">
+<table class="table table-hover bg-white shadow-sm align-middle">
+  <thead class="table-dark"><tr><th>N°</th><th>Fecha</th><th>Cliente</th><th>Estado</th><th class="text-center">Unid.</th><th class="text-end">Total</th><th></th></tr></thead>
+  <tbody>
+  {% for p in pedidos %}
+    <tr>
+      <td class="fw-semibold">{{ p.numero }}</td>
+      <td>{{ p.fecha_creacion|date:"d/m/Y H:i" }}</td>
+      <td>{{ p.usuario.email }}</td>
+      <td><span class="badge estado-{{ p.estado }}">{{ p.get_estado_display }}</span></td>
+      <td class="text-center">{{ p.unidades }}</td>
+      <td class="text-end">$ {{ p.total|floatformat:"2g" }}</td>
+      <td class="text-end"><a href="{{ p.get_absolute_url }}" class="btn btn-sm btn-outline-dark">Gestionar</a></td>
+    </tr>
+  {% empty %}<tr><td colspan="7" class="text-center text-muted">No hay pedidos con esos filtros.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% include "includes/paginacion.html" %}
+{% endblock %}

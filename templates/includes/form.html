@@ -1,0 +1,8 @@
+{# Renderiza todos los campos de un formulario + errores generales. Uso: {% include "includes/form.html" %} #}
+{% if form.non_field_errors %}
+  <div class="alert alert-danger">{% for e in form.non_field_errors %}<div>{{ e }}</div>{% endfor %}</div>
+{% endif %}
+{% for field in form.hidden_fields %}{{ field }}{% endfor %}
+{% for field in form.visible_fields %}
+  {% include "includes/campo.html" with field=field %}
+{% endfor %}

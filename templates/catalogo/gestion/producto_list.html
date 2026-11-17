@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Gestión de productos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+  <h1 class="h3 mb-0"><i class="bi bi-box"></i> Productos</h1>
+  {% if perms.catalogo.add_producto %}
+    <a href="{% url 'catalogo:producto_crear' %}" class="btn btn-dark"><i class="bi bi-plus-lg"></i> Nuevo producto</a>
+  {% endif %}
+</div>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-6"><input type="search" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Buscar por nombre o categoría"></div>
+  <div class="col-md-3">
+    <select name="stock" class="form-select">
+      <option value="">Todo el stock</option>
+      <option value="bajo" {% if request.GET.stock == "bajo" %}selected{% endif %}>Stock bajo (≤ 5)</option>
+    </select>
+  </div>
+  <div class="col-md-3"><button class="btn btn-outline-dark w-100">Filtrar</button></div>
+</form>
+
+<div class="table-responsive">
+<table class="table table-hover bg-white shadow-sm align-middle">
+  <thead class="table-dark"><tr><th style="width:70px"></th><th>Producto</th><th>Categoría</th><th class="text-end">Precio</th><th class="text-center">Stock</th><th class="text-center">Activo</th><th></th></tr></thead>
+  <tbody>
+  {% for p in productos %}
+    <tr>
+      <td>{% include "includes/producto_imagen.html" with clase="rounded sin-imagen-chica" %}</td>
+      <td>{{ p.nombre }}</td>
+      <td>{{ p.categoria.nombre }}</td>
+      <td class="text-end">$ {{ p.precio|floatformat:"2g" }}</td>
+      <td class="text-center"><span class="badge {% if p.agotado %}bg-danger{% elif p.stock_bajo %}bg-warning text-dark{% else %}bg-success{% endif %}">{{ p.stock }}</span></td>
+      <td class="text-center">{% if p.activo %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}<i class="bi bi-x-circle text-secondary"></i>{% endif %}</td>
+      <td class="text-end text-nowrap">
+        <a class="btn btn-sm btn-outline-dark" href="{% url 'catalogo:producto_editar' p.pk %}" title="Editar"><i class="bi bi-pencil"></i></a>
+        <a class="btn btn-sm btn-outline-danger" href="{% url 'catalogo:producto_eliminar' p.pk %}" title="Eliminar"><i class="bi bi-trash"></i></a>
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="7" class="text-center text-muted">No hay productos.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% include "includes/paginacion.html" %}
+{% endblock %}

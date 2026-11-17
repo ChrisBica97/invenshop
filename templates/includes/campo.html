@@ -1,0 +1,24 @@
+{# Renderiza UN campo de formulario con estilo Bootstrap y sus errores. Uso: {% include "includes/campo.html" with field=form.email %} #}
+{% if field.field.widget.input_type == "checkbox" %}
+  <div class="form-check mb-3">
+    {{ field }}
+    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {% if field.errors %}<div class="text-danger small">{{ field.errors|join:" " }}</div>{% endif %}
+  </div>
+{% else %}
+  <div class="mb-3">
+    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="text-danger">*</span>{% endif %}</label>
+    {% if field.field.widget.input_type == "password" %}
+      <div class="input-group">
+        {{ field }}
+        <button class="btn btn-outline-secondary js-ver-password" type="button" data-target="{{ field.id_for_label }}" aria-label="Mostrar contraseña" title="Mostrar contraseña">
+          <i class="bi bi-eye"></i>
+        </button>
+      </div>
+    {% else %}
+      {{ field }}
+    {% endif %}
+    {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}
+    {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors|join:" " }}</div>{% endif %}
+  </div>
+{% endif %}

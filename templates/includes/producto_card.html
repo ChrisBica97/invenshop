@@ -1,0 +1,24 @@
+{# Tarjeta de producto para el catálogo y la home. Recibe la variable "p". #}
+<div class="card h-100 border-0 shadow-sm producto-card {% if p.agotado %}agotado{% endif %}">
+  <a href="{{ p.get_absolute_url }}" class="position-relative">
+    {% include "includes/producto_imagen.html" with clase="card-img-top" %}
+    {% if p.agotado %}<span class="badge bg-danger position-absolute top-0 end-0 m-2">Agotado</span>
+    {% elif p.stock_bajo %}<span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2">¡Últimas {{ p.stock }}!</span>{% endif %}
+  </a>
+  <div class="card-body d-flex flex-column">
+    <small class="text-muted">{{ p.categoria.nombre }}</small>
+    <h3 class="h6 card-title mb-1"><a href="{{ p.get_absolute_url }}" class="text-decoration-none text-dark">{{ p.nombre }}</a></h3>
+    <p class="fs-5 fw-bold mb-3">$ {{ p.precio|floatformat:"2g" }}</p>
+    <div class="mt-auto">
+      {% if p.agotado %}
+        <button class="btn btn-outline-secondary w-100" disabled>Agotado</button>
+      {% else %}
+        <form method="post" action="{% url 'pedidos:carrito_agregar' p.pk %}">{% csrf_token %}
+          <input type="hidden" name="cantidad" value="1">
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <button class="btn btn-dark w-100"><i class="bi bi-cart-plus"></i> Agregar</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>

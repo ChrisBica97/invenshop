@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ producto.nombre }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'catalogo:lista' %}">Catálogo</a></li>
+    <li class="breadcrumb-item"><a href="{{ producto.categoria.get_absolute_url }}">{{ producto.categoria.nombre }}</a></li>
+    <li class="breadcrumb-item active">{{ producto.nombre }}</li>
+  </ol>
+</nav>
+
+<div class="row g-4 mb-5">
+  <div class="col-md-6">
+    {% include "includes/producto_imagen.html" with p=producto clase="rounded-4 shadow-sm" %}
+    {# Atribución obligatoria de las fotos con licencia Creative Commons #}
+    {% if producto.imagen_credito and producto.imagen_disponible %}
+      <p class="small text-muted mt-2 mb-0"><i class="bi bi-camera"></i> Foto:
+        {% if producto.imagen_fuente %}<a href="{{ producto.imagen_fuente }}" target="_blank" rel="noopener" class="text-muted">{{ producto.imagen_credito }}</a>
+        {% else %}{{ producto.imagen_credito }}{% endif %}</p>
+    {% endif %}
+  </div>
+  <div class="col-md-6">
+    <span class="badge text-bg-secondary mb-2">{{ producto.categoria.nombre }}</span>
+    <h1 class="h2">{{ producto.nombre }}</h1>
+    <p class="display-6 fw-bold">$ {{ producto.precio|floatformat:"2g" }}</p>
+    {# {{ }} escapa el HTML automáticamente (protección XSS); linebreaks solo agrega <p>/<br> #}
+    <div class="text-secondary mb-3">{{ producto.descripcion|linebreaks }}</div>
+
+    {% if producto.agotado %}
+      <div class="alert alert-danger"><i class="bi bi-x-circle"></i> <strong>Agotado.</strong> No se puede agregar al carrito.</div>
+    {% else %}
+      <p class="mb-2">
+        {% if producto.stock_bajo %}<span class="text-warning-emphasis fw-semibold"><i class="bi bi-exclamation-triangle"></i> ¡Quedan solo {{ producto.stock }}!</span>
+        {% else %}<span class="text-success"><i class="bi bi-check-circle"></i> Stock disponible: {{ producto.stock }} unidades</span>{% endif %}
+      </p>
+      <form method="post" action="{% url 'pedidos:carrito_agregar' producto.pk %}" class="d-flex gap-2 align-items-end">
+        {% csrf_token %}
+        <div>
+          <label for="{{ form.cantidad.id_for_label }}" class="form-label small mb-1">Cantidad</label>
+          {{ form.cantidad }}
+        </div>
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button class="btn btn-dark btn-lg"><i class="bi bi-cart-plus"></i> Agregar al carrito</button>
+      </form>
+    {% endif %}
+
+    {% if perms.catalogo.change_producto %}
+      <a href="{% url 'catalogo:producto_editar' producto.pk %}" class="btn btn-sm btn-outline-secondary mt-4"><i class="bi bi-pencil"></i> Editar producto</a>
+    {% endif %}
+  </div>
+</div>
+
+{% if relacionados %}
+  <h2 class="h5 mb-3">También en {{ producto.categoria.nombre }}</h2>
+  <div class="row row-cols-2 row-cols-md-4 g-3">
+    {% for p in relacionados %}<div class="col">{% include "includes/producto_card.html" %}</div>{% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

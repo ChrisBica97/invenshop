@@ -1,0 +1,5 @@
+# Dependencias de InvenShop (instalar con: pip install -r requirements.txt)
+Django>=5.2,<7.0        # framework web (5.2 LTS o superior; usa la etiqueta {% querystring %})
+Pillow>=10.0            # requerido por ImageField (imágenes de productos)
+python-dotenv>=1.0      # lectura de variables de entorno desde .env
+# psycopg[binary]>=3.1  # descomentar solo si se usa PostgreSQL

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Checkout · Confirmar{% endblock %}
+
+{% block content %}
+<p class="text-muted small mb-1">Paso 2 de 2</p>
+<h1 class="h3 mb-4">Confirmá tu pedido</h1>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm mb-3"><div class="card-body">
+      <div class="d-flex justify-content-between"><h2 class="h6 text-uppercase text-muted">Envío a</h2>
+        <a href="{% url 'pedidos:checkout' %}" class="small">Modificar</a></div>
+      <p class="mb-0">{{ envio.direccion }}<br>{{ envio.ciudad }} ({{ envio.codigo_postal }})<br>Tel.: {{ envio.telefono_contacto }}</p>
+    </div></div>
+    <div class="card border-0 shadow-sm"><div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% include "includes/form.html" %}
+        <button class="btn btn-warning btn-lg w-100"><i class="bi bi-bag-check"></i> Confirmar pedido</button>
+      </form>
+    </div></div>
+  </div>
+  <div class="col-lg-5">{% include "pedidos/_resumen.html" %}</div>
+</div>
+{% endblock %}

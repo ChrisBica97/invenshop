@@ -1,0 +1,17 @@
+# Entorno y credenciales
+venv/
+.venv/
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Base de datos local y archivos subidos
+db.sqlite3
+media/productos/
+staticfiles/
+
+# Editores
+.vscode/
+.idea/

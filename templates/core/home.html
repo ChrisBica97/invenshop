@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<section class="hero text-white rounded-4 p-5 mb-5 shadow">
+  <h1 class="display-5 fw-bold">Todo lo que necesitás, con stock real.</h1>
+  <p class="lead col-lg-8">InvenShop conecta el inventario de la tienda con el catálogo online:
+     lo que ves disponible, está disponible.</p>
+  <a href="{% url 'catalogo:lista' %}" class="btn btn-warning btn-lg"><i class="bi bi-shop"></i> Ver catálogo</a>
+  {% if not user.is_authenticated %}
+    <a href="{% url 'usuarios:registro' %}" class="btn btn-outline-light btn-lg ms-2">Crear cuenta</a>
+  {% endif %}
+</section>
+
+{% if categorias %}
+<h2 class="h4 mb-3">Categorías</h2>
+<div class="d-flex flex-wrap gap-2 mb-5">
+  {% for c in categorias %}
+    <a href="{{ c.get_absolute_url }}" class="btn btn-outline-dark">{{ c.nombre }} <span class="badge text-bg-secondary">{{ c.total }}</span></a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<h2 class="h4 mb-3">Novedades</h2>
+<div class="row row-cols-2 row-cols-md-4 g-3">
+  {% for p in destacados %}
+    <div class="col">{% include "includes/producto_card.html" %}</div>
+  {% empty %}
+    <p class="text-muted">Todavía no hay productos. Ejecutá <code>python manage.py cargar_demo</code>.</p>
+  {% endfor %}
+</div>
+{% endblock %}

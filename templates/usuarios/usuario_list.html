@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Usuarios y roles{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+  <h1 class="h3 mb-0"><i class="bi bi-people"></i> Usuarios y roles</h1>
+  <div class="btn-group">
+    <a href="?" class="btn btn-sm {% if not rol_actual %}btn-dark{% else %}btn-outline-dark{% endif %}">Todos</a>
+    {% for valor, etiqueta in roles %}
+      <a href="?rol={{ valor }}" class="btn btn-sm {% if rol_actual == valor %}btn-dark{% else %}btn-outline-dark{% endif %}">{{ etiqueta }}</a>
+    {% endfor %}
+  </div>
+</div>
+<div class="table-responsive">
+<table class="table table-hover bg-white shadow-sm align-middle">
+  <thead class="table-dark"><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th></th></tr></thead>
+  <tbody>
+  {% for u in usuarios %}
+    <tr>
+      <td>{{ u.get_full_name }}</td>
+      <td>{{ u.email }}</td>
+      <td><span class="badge text-bg-secondary">{{ u.get_rol_display }}</span></td>
+      <td>{% if u.is_active %}<span class="text-success">Activo</span>{% else %}<span class="text-danger">Inactivo</span>{% endif %}</td>
+      <td class="text-end"><a class="btn btn-sm btn-outline-dark" href="{% url 'usuarios:editar_rol' u.pk %}">Cambiar rol</a></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% include "includes/paginacion.html" %}
+{% endblock %}

@@ -1,0 +1,8 @@
+{# Imagen de un producto "p" o, si no tiene (o el archivo no existe), un reemplazo con sus iniciales. Recibe "clase" opcional. #}
+{% if p.imagen_disponible %}
+  <img src="{{ p.imagen.url }}" class="producto-img w-100 {{ clase }}" alt="{{ p.nombre }}">
+{% else %}
+  <div class="sin-imagen {{ clase }}" title="Producto sin imagen">
+    <span>{{ p.iniciales }}</span>
+  </div>
+{% endif %}

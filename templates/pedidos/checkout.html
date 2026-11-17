@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Checkout · Envío{% endblock %}
+
+{% block content %}
+<p class="text-muted small mb-1">Paso 1 de 2</p>
+<h1 class="h3 mb-4">Datos de envío</h1>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm"><div class="card-body p-4">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% include "includes/campo.html" with field=form.direccion %}
+        <div class="row">
+          <div class="col-sm-7">{% include "includes/campo.html" with field=form.ciudad %}</div>
+          <div class="col-sm-5">{% include "includes/campo.html" with field=form.codigo_postal %}</div>
+        </div>
+        {% include "includes/campo.html" with field=form.telefono_contacto %}
+        <div class="d-flex justify-content-between">
+          <a href="{% url 'pedidos:carrito' %}" class="btn btn-link px-0"><i class="bi bi-arrow-left"></i> Volver al carrito</a>
+          <button class="btn btn-dark">Continuar <i class="bi bi-arrow-right"></i></button>
+        </div>
+      </form>
+    </div></div>
+  </div>
+  <div class="col-lg-5">{% include "pedidos/_resumen.html" %}</div>
+</div>
+{% endblock %}

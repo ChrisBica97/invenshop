@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Reportes{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4"><i class="bi bi-graph-up"></i> Reportes de ventas</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-6"><div class="card border-0 shadow-sm"><div class="card-body">
+    <small class="text-muted">Facturado (pagado + enviado)</small><div class="h2 mb-0">$ {{ facturado|floatformat:"2g" }}</div>
+  </div></div></div>
+  <div class="col-md-6"><div class="card border-0 shadow-sm"><div class="card-body">
+    <small class="text-muted">Pedidos totales</small><div class="h2 mb-0">{{ total_pedidos }}</div>
+  </div></div></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm h-100"><div class="card-body">
+      <h2 class="h6 text-uppercase text-muted">Pedidos por estado</h2>
+      <table class="table table-sm mb-0">
+        <thead><tr><th>Estado</th><th class="text-center">Cantidad</th><th class="text-end">Monto</th></tr></thead>
+        {% for fila in por_estado %}
+          <tr><td><span class="badge estado-{{ fila.estado }}">{{ fila.estado }}</span></td><td class="text-center">{{ fila.cantidad }}</td><td class="text-end">$ {{ fila.monto|floatformat:"2g" }}</td></tr>
+        {% empty %}<tr><td colspan="3" class="text-muted">Sin datos.</td></tr>{% endfor %}
+      </table>
+    </div></div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm h-100"><div class="card-body">
+      <h2 class="h6 text-uppercase text-muted">Top 5 productos más vendidos</h2>
+      <ol class="mb-0">
+        {% for fila in mas_vendidos %}<li class="d-flex justify-content-between"><span>{{ fila.producto__nombre }}</span><strong>{{ fila.unidades }} u.</strong></li>
+        {% empty %}<li class="text-muted">Sin ventas.</li>{% endfor %}
+      </ol>
+    </div></div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm h-100"><div class="card-body">
+      <h2 class="h6 text-uppercase text-muted">Mejores clientes</h2>
+      <table class="table table-sm mb-0">
+        {% for fila in mejores_clientes %}
+          <tr><td>{{ fila.usuario__email }}</td><td class="text-center">{{ fila.compras }} pedido{{ fila.compras|pluralize }}</td><td class="text-end">$ {{ fila.monto|floatformat:"2g" }}</td></tr>
+        {% empty %}<tr><td class="text-muted">Sin datos.</td></tr>{% endfor %}
+      </table>
+    </div></div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm h-100"><div class="card-body">
+      <h2 class="h6 text-uppercase text-muted">Stock bajo (≤ 5)</h2>
+      <ul class="list-unstyled mb-0">
+        {% for p in stock_bajo %}<li class="d-flex justify-content-between border-bottom py-1"><span>{{ p.nombre }} <small class="text-muted">· {{ p.categoria.nombre }}</small></span>
+          <span class="badge {% if p.stock == 0 %}bg-danger{% else %}bg-warning text-dark{% endif %}">{{ p.stock }}</span></li>
+        {% empty %}<li class="text-muted">Todo en orden.</li>{% endfor %}
+      </ul>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

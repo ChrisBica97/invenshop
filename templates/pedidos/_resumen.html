@@ -1,0 +1,12 @@
+{# Resumen del carrito reutilizado en los pasos del checkout. Usa items y total. #}
+<div class="card border-0 shadow-sm"><div class="card-body">
+  <h2 class="h6 text-uppercase text-muted">Resumen del pedido</h2>
+  <ul class="list-unstyled small mb-3">
+    {% for item in items %}
+      <li class="d-flex justify-content-between py-1 border-bottom">
+        <span>{{ item.cantidad }} × {{ item.producto.nombre }}</span><span>$ {{ item.subtotal|floatformat:"2g" }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+  <div class="d-flex justify-content-between fw-bold fs-5"><span>Total</span><span>$ {{ total|floatformat:"2g" }}</span></div>
+</div></div>

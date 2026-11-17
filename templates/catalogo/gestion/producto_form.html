@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Editar producto{% else %}Nuevo producto{% endif %}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-8">
+  <div class="card border-0 shadow-sm"><div class="card-body p-4">
+    <h1 class="h4 mb-3">{% if object %}Editar «{{ object.nombre }}»{% else %}Nuevo producto{% endif %}</h1>
+    {% if object %}
+      <div class="mb-3" style="max-width:220px">
+        <small class="text-muted d-block mb-1">Imagen actual</small>
+        {% include "includes/producto_imagen.html" with p=object clase="rounded shadow-sm" %}
+      </div>
+    {% endif %}
+    {# enctype multipart: obligatorio para poder subir la imagen #}
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {% include "includes/form.html" %}
+      <button class="btn btn-dark">Guardar</button>
+      <a class="btn btn-link" href="{% url 'catalogo:gestion_productos' %}">Cancelar</a>
+    </form>
+  </div></div>
+</div></div>
+{% endblock %}

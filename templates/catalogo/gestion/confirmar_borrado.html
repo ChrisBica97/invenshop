@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Confirmar eliminación{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6">
+  <div class="card border-danger shadow-sm"><div class="card-body p-4">
+    <h1 class="h4 text-danger"><i class="bi bi-exclamation-triangle"></i> Confirmar eliminación</h1>
+    <p>¿Seguro que querés eliminar <strong>«{{ object }}»</strong>? Esta acción no se puede deshacer.</p>
+    <p class="small text-muted">Si el elemento está asociado a pedidos o productos, el sistema lo impedirá para conservar el historial.</p>
+    <form method="post">
+      {% csrf_token %}
+      <button class="btn btn-danger">Sí, eliminar</button>
+      <a class="btn btn-link" href="javascript:history.back()">Cancelar</a>
+    </form>
+  </div></div>
+</div></div>
+{% endblock %}

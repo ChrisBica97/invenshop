@@ -1,0 +1,17 @@
+/* Estilos propios de InvenShop (complementan a Bootstrap) */
+.producto-img { aspect-ratio: 4 / 3; object-fit: cover; background: #e9ecef; }
+.producto-card { transition: transform .15s ease, box-shadow .15s ease; }
+.producto-card:hover { transform: translateY(-3px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.12) !important; }
+.producto-card.agotado .producto-img { filter: grayscale(1); opacity: .6; }
+/* Reemplazo cuando el producto no tiene imagen: degradado + iniciales */
+.sin-imagen { aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #495057, #adb5bd); color: #fff; font-size: 3.5rem; font-weight: 700; letter-spacing: .05em; }
+.sin-imagen-chica { font-size: 1.1rem; }
+img.sin-imagen-chica { aspect-ratio: 4 / 3; object-fit: cover; }
+.hero { background: linear-gradient(135deg, #212529 0%, #343a40 60%, #495057 100%); }
+.stat-card .display-6 { font-weight: 700; }
+.estado-Pendiente { background-color: #ffc107 !important; color: #212529 !important; }
+.estado-Pagado { background-color: #0d6efd !important; }
+.estado-Enviado { background-color: #198754 !important; }
+.estado-Cancelado { background-color: #6c757d !important; }
+.errorlist { list-style: none; padding: 0; margin: .25rem 0 0; color: var(--bs-danger); font-size: .875em; }

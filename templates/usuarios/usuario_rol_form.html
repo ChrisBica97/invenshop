@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Cambiar rol{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6">
+  <div class="card border-0 shadow-sm"><div class="card-body p-4">
+    <h1 class="h4">Rol de {{ object.get_full_name }}</h1>
+    <p class="text-muted small">{{ object.email }}. Al cambiar el rol se actualizan automáticamente sus permisos.</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include "includes/form.html" %}
+      <button class="btn btn-dark">Guardar</button>
+      <a class="btn btn-link" href="{% url 'usuarios:lista' %}">Cancelar</a>
+    </form>
+  </div></div>
+</div></div>
+{% endblock %}

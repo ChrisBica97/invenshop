@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Panel de gestión{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+  <h1 class="h3 mb-0"><i class="bi bi-speedometer2"></i> Panel de gestión</h1>
+  <span class="text-muted">Sesión: {{ user.get_full_name }} · {{ user.get_rol_display }}</span>
+</div>
+
+<div class="row g-3 mb-4">
+  {% for valor, etiqueta, cantidad in resumen_estados %}
+    <div class="col-6 col-lg-3">
+      <a href="{% url 'pedidos:gestion' %}?estado={{ valor }}" class="text-decoration-none">
+        <div class="card stat-card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <span class="badge estado-{{ valor }}">{{ etiqueta }}</span>
+            <div class="display-6 text-dark">{{ cantidad }}</div>
+            <small class="text-muted">pedidos</small>
+          </div>
+        </div>
+      </a>
+    </div>
+  {% endfor %}
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body">
+    <small class="text-muted">Facturado (pagado + enviado)</small><div class="h3 mb-0">$ {{ facturado|floatformat:"2g" }}</div>
+  </div></div></div>
+  <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body">
+    <small class="text-muted">Productos cargados</small><div class="h3 mb-0">{{ productos_total }}</div>
+  </div></div></div>
+  <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body">
+    <small class="text-muted">Productos activos agotados</small><div class="h3 mb-0 text-danger">{{ productos_agotados }}</div>
+  </div></div></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white d-flex justify-content-between"><strong>Últimos pedidos</strong>
+        <a href="{% url 'pedidos:gestion' %}">Ver todos</a></div>
+      <ul class="list-group list-group-flush">
+        {% for p in ultimos_pedidos %}
+          <a href="{{ p.get_absolute_url }}" class="list-group-item list-group-item-action d-flex justify-content-between">
+            <span>{{ p.numero }} · {{ p.usuario.email }}</span>
+            <span><span class="badge estado-{{ p.estado }}">{{ p.estado }}</span> $ {{ p.total|floatformat:"2g" }}</span>
+          </a>
+        {% empty %}<li class="list-group-item text-muted">Sin pedidos.</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white d-flex justify-content-between"><strong>Stock bajo</strong>
+        <a href="{% url 'catalogo:gestion_productos' %}?stock=bajo">Ver todos</a></div>
+      <ul class="list-group list-group-flush">
+        {% for p in stock_bajo %}
+          <a href="{% url 'catalogo:producto_editar' p.pk %}" class="list-group-item list-group-item-action d-flex justify-content-between">
+            <span>{{ p.nombre }}</span>
+            <span class="badge {% if p.stock == 0 %}bg-danger{% else %}bg-warning text-dark{% endif %}">{{ p.stock }} u.</span>
+          </a>
+        {% empty %}<li class="list-group-item text-muted">Todo en orden.</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Carrito{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4"><i class="bi bi-cart3"></i> Tu carrito</h1>
+
+{% if items %}
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm">
+      <ul class="list-group list-group-flush">
+      {% for item in items %}
+        <li class="list-group-item py-3">
+          <div class="row align-items-center g-3">
+            <div class="col-3 col-md-2">
+              {% include "includes/producto_imagen.html" with p=item.producto clase="rounded sin-imagen-chica" %}
+            </div>
+            <div class="col-9 col-md-4">
+              <a href="{{ item.producto.get_absolute_url }}" class="fw-semibold text-dark text-decoration-none">{{ item.producto.nombre }}</a>
+              <div class="small text-muted">$ {{ item.precio|floatformat:"2g" }} c/u · stock: {{ item.producto.stock }}</div>
+              {% if item.supera_stock %}<div class="small text-danger">Supera el stock disponible</div>{% endif %}
+            </div>
+            <div class="col-7 col-md-3">
+              {# Modificar cantidad (0 = quitar) #}
+              <form method="post" action="{% url 'pedidos:carrito_actualizar' item.producto.pk %}" class="input-group input-group-sm">
+                {% csrf_token %}
+                <input type="number" name="cantidad" value="{{ item.cantidad }}" min="0" max="{{ item.producto.stock }}" class="form-control">
+                <button class="btn btn-outline-dark" title="Actualizar"><i class="bi bi-arrow-repeat"></i></button>
+              </form>
+            </div>
+            <div class="col-3 col-md-2 text-end fw-bold">$ {{ item.subtotal|floatformat:"2g" }}</div>
+            <div class="col-2 col-md-1 text-end">
+              <form method="post" action="{% url 'pedidos:carrito_quitar' item.producto.pk %}">{% csrf_token %}
+                <button class="btn btn-sm btn-outline-danger" title="Quitar"><i class="bi bi-trash"></i></button>
+              </form>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+      </ul>
+    </div>
+    <form method="post" action="{% url 'pedidos:carrito_vaciar' %}" class="mt-3">{% csrf_token %}
+      <button class="btn btn-link text-danger px-0"><i class="bi bi-x-circle"></i> Vaciar carrito</button>
+    </form>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm"><div class="card-body">
+      <h2 class="h5">Resumen</h2>
+      <div class="d-flex justify-content-between fs-4 fw-bold my-3"><span>Total</span><span>$ {{ total|floatformat:"2g" }}</span></div>
+      {% if hay_problemas_stock %}
+        <div class="alert alert-danger small">Ajustá las cantidades marcadas para poder continuar.</div>
+        <button class="btn btn-warning w-100" disabled>Continuar compra</button>
+      {% else %}
+        <a href="{% url 'pedidos:checkout' %}" class="btn btn-warning w-100 btn-lg">Continuar compra <i class="bi bi-arrow-right"></i></a>
+        {% if not user.is_authenticated %}<p class="small text-muted mt-2 mb-0">Te vamos a pedir que inicies sesión.</p>{% endif %}
+      {% endif %}
+      <a href="{% url 'catalogo:lista' %}" class="btn btn-link w-100 mt-2">Seguir comprando</a>
+    </div></div>
+  </div>
+</div>
+{% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-cart-x display-1 text-muted"></i>
+    <p class="lead mt-3">Tu carrito está vacío.</p>
+    <a href="{% url 'catalogo:lista' %}" class="btn btn-dark">Ir al catálogo</a>
+  </div>
+{% endif %}
+{% endblock %}

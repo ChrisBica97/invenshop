@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Mi perfil{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card border-0 shadow-sm"><div class="card-body p-4">
+      <h1 class="h4">Mi perfil</h1>
+      <dl class="row small text-muted mb-4">
+        <dt class="col-4">Email</dt><dd class="col-8">{{ user.email }}</dd>
+        <dt class="col-4">Rol</dt><dd class="col-8">{{ user.get_rol_display }}</dd>
+        <dt class="col-4">Alta</dt><dd class="col-8">{{ user.date_joined|date:"d/m/Y" }}</dd>
+      </dl>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% include "includes/form.html" %}
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-dark">Guardar cambios</button>
+          <a class="btn btn-outline-secondary" href="{% url 'usuarios:cambiar_password' %}"><i class="bi bi-key"></i> Cambiar contraseña</a>
+        </div>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

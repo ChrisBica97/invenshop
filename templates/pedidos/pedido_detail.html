@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Pedido {{ pedido.numero }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+  <h1 class="h3 mb-0">Pedido {{ pedido.numero }} <span class="badge estado-{{ pedido.estado }} fs-6 align-middle">{{ pedido.get_estado_display }}</span></h1>
+  {% if perms.pedidos.ver_todos_pedidos %}
+    <a href="{% url 'pedidos:gestion' %}" class="btn btn-outline-dark btn-sm"><i class="bi bi-arrow-left"></i> Gestión de pedidos</a>
+  {% else %}
+    <a href="{% url 'pedidos:mis_pedidos' %}" class="btn btn-outline-dark btn-sm"><i class="bi bi-arrow-left"></i> Mis pedidos</a>
+  {% endif %}
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm">
+      <div class="table-responsive">
+      <table class="table mb-0 align-middle">
+        <thead class="table-light"><tr><th>Producto</th><th class="text-center">Cantidad</th><th class="text-end">Precio unit.</th><th class="text-end">Subtotal</th></tr></thead>
+        <tbody>
+        {% for d in pedido.detalles.all %}
+          <tr><td>{{ d.producto.nombre }}</td><td class="text-center">{{ d.cantidad }}</td>
+              <td class="text-end">$ {{ d.precio_unitario|floatformat:"2g" }}</td><td class="text-end">$ {{ d.subtotal|floatformat:"2g" }}</td></tr>
+        {% endfor %}
+        </tbody>
+        <tfoot><tr class="fw-bold fs-5"><td colspan="3" class="text-end">Total</td><td class="text-end">$ {{ pedido.total|floatformat:"2g" }}</td></tr></tfoot>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm mb-3"><div class="card-body small">
+      <h2 class="h6 text-uppercase text-muted">Datos</h2>
+      <p class="mb-1"><strong>Fecha:</strong> {{ pedido.fecha_creacion|date:"d/m/Y H:i" }}</p>
+      <p class="mb-1"><strong>Cliente:</strong> {{ pedido.usuario.get_full_name }} ({{ pedido.usuario.email }})</p>
+      <p class="mb-1"><strong>Envío:</strong> {{ pedido.direccion }}, {{ pedido.ciudad }} ({{ pedido.codigo_postal }})</p>
+      <p class="mb-0"><strong>Teléfono:</strong> {{ pedido.telefono_contacto }}</p>
+    </div></div>
+
+    {# Solo personal con permiso pedidos.cambiar_estado_pedido ve este formulario #}
+    {% if form_estado %}
+      <div class="card border-warning shadow-sm"><div class="card-body">
+        <h2 class="h6 text-uppercase text-muted">Cambiar estado</h2>
+        <form method="post" action="{% url 'pedidos:cambiar_estado' pedido.pk %}" class="d-flex gap-2">
+          {% csrf_token %}
+          {{ form_estado.estado }}
+          <button class="btn btn-warning">Aplicar</button>
+        </form>
+        <p class="small text-muted mt-2 mb-0">Al cancelar, el stock de los productos se repone automáticamente.</p>
+      </div></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
